@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # ------- CONFIGURATION ----------------
-export GITHUB_WEBHOOK_URL="https://smee.io/<CHANNEL_ID>"
-export GITHUB_WEBHOOK_SECRET="ff-my-github-webhook-secret"
+export GITHUB_WEBHOOK_URL="https://smee.io/5ULU1ePAZXEqTzFO"
+export GITHUB_WEBHOOK_SECRET="ff-custom-sorting"
 # ------- END CONFIGURATION ------------
 
 echo "Flutter hotreload watch for a DART files changes..."

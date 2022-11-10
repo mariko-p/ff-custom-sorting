@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "github-auto-sync": "file:tools/github",
+    "prefix": "^1.0.0"
+  }
+}
