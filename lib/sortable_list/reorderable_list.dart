@@ -14,11 +14,13 @@ class DraggableReorderableList extends StatefulWidget {
   final EdgeInsets padding;
   final DraggingMode draggingMode;
   final OnReorderCallback onReorder;
+  final ScrollPhysics? physics;
 
   const DraggableReorderableList({
     Key? key,
     required this.widgets,
     required this.onReorder,
+    this.physics,
     this.gap = 0.0,
     this.padding = EdgeInsets.zero,
     this.draggingMode = DraggingMode.iOS,
@@ -87,6 +89,7 @@ class _DraggableReorderableListState extends State<DraggableReorderableList> {
       onReorder: _reorderCallback,
       onReorderDone: _reorderDone,
       child: ListView.separated(
+        physics: widget.physics,
         itemCount: widget.widgets.length,
         clipBehavior: Clip.none,
         itemBuilder: (context, index) => Item(
