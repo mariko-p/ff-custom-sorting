@@ -44,7 +44,7 @@ class _DraggableReorderableListState extends State<DraggableReorderableList> {
     super.initState();
     _keys = List<Key>.generate(
       widget.widgets.length,
-      (int index) => ValueKey(index),
+      (int index) => widget.widgets[index].key!,
     );
     _items = List<int>.generate(
       widget.widgets.length,
@@ -62,7 +62,6 @@ class _DraggableReorderableListState extends State<DraggableReorderableList> {
 
     final draggedItem = widget.widgets[draggingIndex];
     setState(() {
-      debugPrint("Reordering $item -> $newPosition");
       widget.widgets.removeAt(draggingIndex);
       widget.widgets.insert(newPositionIndex, draggedItem);
     });
@@ -72,7 +71,6 @@ class _DraggableReorderableListState extends State<DraggableReorderableList> {
   void _reorderDone(Key draggedKey) {
     final newPositionIndex = _indexOfKey(draggedKey);
     final draggedItem = widget.widgets[newPositionIndex];
-    debugPrint("Reordering finished for $draggedItem}");
 
     int oldIndex = _keys.indexWhere((Key key) => key == draggedKey);
 
