@@ -5,6 +5,7 @@ import 'package:from_css_color/from_css_color.dart';
 
 import '../../flutter_flow/lat_lng.dart';
 import '../../flutter_flow/place.dart';
+import '../../flutter_flow/uploaded_file.dart';
 
 /// SERIALIZATION HELPERS
 
@@ -23,6 +24,9 @@ String placeToString(FFPlace place) => jsonEncode({
       'country': place.country,
       'zipCode': place.zipCode,
     });
+
+String uploadedFileToString(FFUploadedFile uploadedFile) =>
+    uploadedFile.serialize();
 
 String? serializeParam(
   dynamic param,
@@ -60,6 +64,8 @@ String? serializeParam(
         return (param as Color).toCssString();
       case ParamType.FFPlace:
         return placeToString(param as FFPlace);
+      case ParamType.FFUploadedFile:
+        return uploadedFileToString(param as FFUploadedFile);
       case ParamType.JSON:
         return json.encode(param);
 
@@ -122,6 +128,9 @@ FFPlace placeFromString(String placeStr) {
   );
 }
 
+FFUploadedFile uploadedFileFromString(String uploadedFileStr) =>
+    FFUploadedFile.deserialize(uploadedFileStr);
+
 enum ParamType {
   int,
   double,
@@ -132,6 +141,7 @@ enum ParamType {
   LatLng,
   Color,
   FFPlace,
+  FFUploadedFile,
   JSON,
 }
 
@@ -152,7 +162,7 @@ dynamic deserializeParam<T>(
       return paramValues
           .where((p) => p is String)
           .map((p) => p as String)
-          .map((p) => deserializeParam(p, paramType, false))
+          .map((p) => deserializeParam<T>(p, paramType, false))
           .where((p) => p != null)
           .map((p) => p! as T)
           .toList();
@@ -179,6 +189,8 @@ dynamic deserializeParam<T>(
         return fromCssColor(param);
       case ParamType.FFPlace:
         return placeFromString(param);
+      case ParamType.FFUploadedFile:
+        return uploadedFileFromString(param);
       case ParamType.JSON:
         return json.decode(param);
 
