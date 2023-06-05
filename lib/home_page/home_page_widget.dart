@@ -1,8 +1,13 @@
 import 'dart:math';
 
-import '../flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
 import '../sortable_list/reorderable_list.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'home_page_model.dart';
+export 'home_page_model.dart';
 
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({Key? key}) : super(key: key);
@@ -12,12 +17,16 @@ class HomePageWidget extends StatefulWidget {
 }
 
 class _HomePageWidgetState extends State<HomePageWidget> {
+  late HomePageModel _model;
+
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  final _unfocusNode = FocusNode();
   late List<Widget> _widgets;
 
   @override
   void initState() {
     super.initState();
+    _model = createModel(context, () => HomePageModel());
     _widgets = List<Widget>.generate(
       50,
       (int index) => Container(
@@ -37,28 +46,37 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   }
 
   @override
+  void dispose() {
+    _model.dispose();
+
+    _unfocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-      appBar: AppBar(
-        backgroundColor: FlutterFlowTheme.of(context).primaryColor,
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Custom Sorting DEMO',
-          style: FlutterFlowTheme.of(context).title2.override(
-                fontFamily: 'Poppins',
-                color: Colors.white,
-                fontSize: 22,
-              ),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        appBar: AppBar(
+          backgroundColor: FlutterFlowTheme.of(context).primary,
+          automaticallyImplyLeading: false,
+          title: Text(
+            'Custom Sorting DEMO',
+            style: FlutterFlowTheme.of(context).headlineMedium.override(
+                  fontFamily: 'Poppins',
+                  color: Colors.white,
+                  fontSize: 22.0,
+                ),
+          ),
+          actions: [],
+          centerTitle: false,
+          elevation: 2.0,
         ),
-        actions: [],
-        centerTitle: false,
-        elevation: 2,
-      ),
-      body: SafeArea(
-        child: GestureDetector(
-          onTap: () => FocusScope.of(context).unfocus(),
+        body: SafeArea(
+          top: true,
           child: DraggableReorderableList(
             widgets: _widgets,
             onReorder: (reorderedKeys, reorderedItems) {
