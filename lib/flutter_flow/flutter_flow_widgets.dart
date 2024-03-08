@@ -22,6 +22,7 @@ class FFButtonOptions {
     this.hoverBorderSide,
     this.hoverTextColor,
     this.hoverElevation,
+    this.maxLines,
   });
 
   final TextStyle? textStyle;
@@ -32,6 +33,7 @@ class FFButtonOptions {
   final Color? color;
   final Color? disabledColor;
   final Color? disabledTextColor;
+  final int? maxLines;
   final Color? splashColor;
   final double? iconSize;
   final Color? iconColor;
@@ -46,14 +48,14 @@ class FFButtonOptions {
 
 class FFButtonWidget extends StatefulWidget {
   const FFButtonWidget({
-    Key? key,
+    super.key,
     required this.text,
     required this.onPressed,
     this.icon,
     this.iconData,
     required this.options,
     this.showLoadingIndicator = true,
-  }) : super(key: key);
+  });
 
   final String text;
   final Widget? icon;
@@ -69,16 +71,23 @@ class FFButtonWidget extends StatefulWidget {
 class _FFButtonWidgetState extends State<FFButtonWidget> {
   bool loading = false;
 
+  int get maxLines => widget.options.maxLines ?? 1;
+
   @override
   Widget build(BuildContext context) {
     Widget textWidget = loading
-        ? Center(
-            child: Container(
-              width: 23,
-              height: 23,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  widget.options.textStyle!.color ?? Colors.white,
+        ? SizedBox(
+            width: widget.options.width == null
+                ? _getTextWidth(widget.text, widget.options.textStyle, maxLines)
+                : null,
+            child: Center(
+              child: SizedBox(
+                width: 23,
+                height: 23,
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    widget.options.textStyle!.color ?? Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -86,7 +95,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
         : AutoSizeText(
             widget.text,
             style: widget.options.textStyle?.withoutColor(),
-            maxLines: 1,
+            maxLines: maxLines,
             overflow: TextOverflow.ellipsis,
           );
 
@@ -156,7 +165,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
         if (states.contains(MaterialState.pressed)) {
           return widget.options.splashColor;
         }
-        return null;
+        return widget.options.hoverColor == null ? null : Colors.transparent;
       }),
       padding: MaterialStateProperty.all(widget.options.padding ??
           const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0)),
@@ -171,8 +180,8 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
       ),
     );
 
-    if (widget.icon != null || widget.iconData != null) {
-      return Container(
+    if ((widget.icon != null || widget.iconData != null) && !loading) {
+      return SizedBox(
         height: widget.options.height,
         width: widget.options.width,
         child: ElevatedButton.icon(
@@ -236,3 +245,13 @@ extension _WithoutColorExtension on TextStyle {
         overflow: overflow,
       );
 }
+
+// Slightly hacky method of getting the layout width of the provided text.
+double _getTextWidth(String text, TextStyle? style, int maxLines) =>
+    (TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+      maxLines: maxLines,
+    )..layout())
+        .size
+        .width;
